@@ -1,0 +1,49 @@
+
+.modal {
+    cursor: default;
+    display: block;
+    position: fixed;      
+    right: 0;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    overflow: auto;
+    background-color: #4a4aff8c;
+}
+.modal .modalContent {
+    display: block; 
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+#startBut
+{
+margin-top: 5px;     
+font-size:1.2em;
+font-family:verdana; 
+background-color:greenyellow;   
+}
+
+button
+{
+margin-top: 5px;     
+font-size:1.2em;
+font-family:verdana;    
+}
+
+#modalTitle
+{
+margin-top: 5px;     
+font-size:3em;
+font-family:verdana;    
+}
+
+#modalDescription
+{
+margin-top: 5px;     
+font-size:1em;
+font-family:verdana;    
+}
