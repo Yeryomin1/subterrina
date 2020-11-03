@@ -10,5 +10,4 @@ Simple javascript and HTML5's canvas 3D simulator game allowing you to be an iro
   * oxygen reserve
   * fuel reserve
 * warning signals with short instruction messages
-* keyboard or mouse control
-Currently, only one mission is simulated. In this mission, the player docks at the Eastern gate of the Northern base.
+* keyboard or mouse control  Currently, only one mission is simulated. In this mission, the player docks at the Eastern gate of the Northern base.
