@@ -225,7 +225,7 @@ window.onload = function () {
     }
 
     informBut.onclick = function () {
-        alert("information pressed");
+        alert("currently under development");
     }
 
     settingsBut.onclick = function () {
