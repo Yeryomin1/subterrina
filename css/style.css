@@ -5,7 +5,7 @@
     position: fixed;      
     right: 0;
     top: 0;
-    width: 50%;
+    width: 70%;
     height: 100%;
     overflow: auto;
     background-color: #4a4aff8c;
@@ -13,16 +13,22 @@
 .modal .modalContent {
     display: block; 
     background-color: #fefefe;
-    margin: 15% auto;
+    margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
+    width: 90%;
 }
 
 #messageWindow
 {
     display: none;
 }
+
+#instructionWindow
+{
+    display: block;
+}
+
 
 #startBut
 {
@@ -42,13 +48,21 @@ font-family:verdana;
 #modalTitle
 {
 margin-top: 5px;     
-font-size:3em;
+font-size:2em;
 font-family:verdana;    
 }
+
 
 #modalDescription
 {
 margin-top: 5px;     
 font-size:1em;
 font-family:verdana;    
+}
+
+#instructionTitle
+{
+    margin-top: 5px;     
+    font-size:1.5em;
+    font-family:verdana;    
 }

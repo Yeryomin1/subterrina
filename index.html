@@ -5,8 +5,8 @@
   <title>Iron mole</title>
   <link rel="stylesheet" type="text/css" href='css/style.css' />
   <script src="js/globals.js"></script>
-  <script src="js/earth.js"></script>  
-  <script src="js/drawing.js"></script>  
+  <script src="js/earth.js"></script>
+  <script src="js/drawing.js"></script>
   <script src="js/mole.js"></script>
 
 
@@ -14,13 +14,20 @@
     <div id="messageWindow" class="modalContent">
       <p id="messageTitle">Message</p>
       <p id="messageText">Text</p>
-    </div>    
+    </div>
     <div id="speedWindow" class="modalContent">
       <p id="modalTitle">Iron mole</p>
       <p id="modalDescription">Flying through the earth on a subterrina</p>
       <button id="startBut">Start</button>
-      <button id="informBut">About</button>
-      <button id="settingsBut">Settings</button>      
+      <button id="informBut">Instruction</button>
+      <button id="settingsBut">Settings</button>
+    </div>
+    <div id="instructionWindow" class="modalContent">
+      <p id="instructionTitle">Info</p>
+      <p id="instructionText">Welcome to the post-Apocalypse world. 
+        The people here live underground. The only suitable transport is iron mole.
+        Your base has fallen into disrepair. Your subterrina is involved in the emergency evacuation.</p>
+      <p>You have to deliver passengers to the Northern base. The entrance to the base is only accessible through the East gate.</p>
     </div>
   </div>
 
@@ -29,4 +36,5 @@
 <body>
   <canvas id="drawingCanvas" width="640" height="480"></canvas>
 </body>
+
 </html>

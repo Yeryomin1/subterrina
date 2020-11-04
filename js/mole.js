@@ -9,16 +9,25 @@ window.onload = function () {
     //объекты:
     let game = {};
 
+        game._modalWindow = document.getElementById("modalWindow");
+        game._instructionWindow = document.getElementById("instructionWindow"); 
+        game._messageWindow = document.getElementById("messageWindow");
+
+        game._messageTitle = document.getElementById("messageTitle");
+        game._messageText = document.getElementById("messageText");
+
+        game._instructionTitle = document.getElementById("instructionTitle");
+        game._instructionText = document.getElementById("instructionText");
+
+
+
     game.init = function () {
         draw.init(canvas);
         earth.init();
 
         //поля:        
         game._stop = true;
-        game._modalWindow = document.getElementById("modalWindow");
-        game._messageWindow = document.getElementById("messageWindow");
-        game._messageTitle = document.getElementById("messageTitle");
-        game._messageText = document.getElementById("messageText");        
+            
 
 
         game._frameRate = 60;
@@ -238,10 +247,16 @@ window.onload = function () {
     startBut.onclick = function () {
         game.init();
         game.setStop(false);
+
     }
 
     informBut.onclick = function () {
-        alert("currently under development");
+        game._instructionTitle.innerHTML = "Controls";
+        game._instructionText.innerHTML = "Use keys 'W' and 'S' to control power plant,\
+         'A'/'D' - left/right turn. Numpad keys: '8'/'2' - nose down/up,\
+          '4'/'6' - roll left/right .<br><b>Subterrina operating restrictions:</b>\
+          <br>pitch - 20 degrees (up and down); <br>roll - 45 degrees (left and right);\
+          <br>maximum depth - 8200 feet.";
     }
 
     settingsBut.onclick = function () {
