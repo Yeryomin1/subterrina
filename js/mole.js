@@ -16,6 +16,9 @@ window.onload = function () {
         //поля:        
         game._stop = true;
         game._modalWindow = document.getElementById("modalWindow");
+        game._messageWindow = document.getElementById("messageWindow");
+        game._messageTitle = document.getElementById("messageTitle");
+        game._messageText = document.getElementById("messageText");        
 
 
         game._frameRate = 60;
@@ -53,6 +56,13 @@ window.onload = function () {
 
         game._maxFinishSpeed = 20;
 
+    }
+
+    //сообщение в модальном окне:
+    game.alert = function(msgTitle, msgText){
+        game._messageWindow.style.display = "block";
+        game._messageTitle.innerHTML = msgTitle;
+        game._messageText.innerHTML = msgText;
     }
 
 
@@ -140,11 +150,17 @@ window.onload = function () {
         //проверка возможности продолжения игры:
         if (game._oxygen < 0 || game._roll > 55 || game._roll < -55 || game._pitch > 25 || game._pitch < -25 || game._depth < 0 || game._depth > 2800 || earth.winOrLose==-1 || (earth.winOrLose==1&&game._speed>game._maxFinishSpeed)) {
             game.setStop(true);
-            alert("game over");
+            if (game._oxygen < 0) game.alert("GAME OVER", "Lack of oxygen");
+            if (game._roll > 55 || game._roll < -55) game.alert("GAME OVER", "The mole is destroyed. Roll restriction violated.");
+            if ( game._pitch > 25 || game._pitch < -25 ) game.alert("GAME OVER", "The mole is destroyed. Pitch restriction violated.");
+            if ( game._depth > 2800 ) game.alert("GAME OVER", "The mole is destroyed. Depth restriction violated.");
+            if ( game._depth < 0 ) game.alert("GAME OVER", "The mole is destroyed. Surface reached.");
+            if ( earth.winOrLose==-1 ) game.alert("GAME OVER", "Collision. The underground base is destroyed.");
+            if ( earth.winOrLose==1&&game._speed>game._maxFinishSpeed ) game.alert("GAME OVER", "The maximum speed of the contact is exceeded. The underground base is destroyed.");           
         }
         if (earth.winOrLose==1&&game._speed<=game._maxFinishSpeed){
             game.setStop(true);
-            alert("Mission accomplished");            
+            game.alert("Mission accomplished", "Great job!!!");            
         }
         //реализуется физика:
         if (game._fuel < 0) {
