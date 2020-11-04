@@ -15,4 +15,4 @@ Currently, only one mission is simulated. In this mission, the player docks at t
 ## Screenshots
 ### General
 The game as a whole looks like this.
-![](images/play.png "")
+![](images/play.gif "")
