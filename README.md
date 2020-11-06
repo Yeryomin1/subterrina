@@ -1,5 +1,6 @@
 # subterrina
 Simple javascript and HTML5's canvas 3D simulator game allowing you to be an iron mole driver. [View online](https://yeryomin1.github.io/subterrina/).
+![](images/screen.jpg "")
 ## Current features
 * dashboard with indication of vehicle parameters:
   * roll, heading and pitch
