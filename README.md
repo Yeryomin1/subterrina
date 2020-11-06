@@ -14,15 +14,15 @@ Simple javascript and HTML5's canvas 3D simulator game allowing you to be an iro
 Currently, only one mission is simulated. In this mission, the player docks at the Eastern gate of the Northern base.
 ## Controls
 Two control modes of pitch and roll are supported.
-### Common controls
-* W/S: Increase/Decrease throttle
-* A/D: Left/Right yaw
 ### Mouse controls
 * left/right - roll, left/right
 * forward/backward - pitch, nose down/up
 ### Numpad controls
 * '4'/'6' - roll, left/right
 * '8'/'2' - pitch, nose down/up
+### Common controls for both modes
+* W/S: Increase/Decrease throttle
+* A/D: Left/Right yaw
 ## Physics
 Obviously, there are no exact models for the game. Currently, there is no source data for creating such models. However, we can make some assumptions:
 1. The mole moves in the direction of its longitudinal axis, the values of the angles of attack and sideslip are negligible.
