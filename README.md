@@ -26,7 +26,7 @@ Two control modes of pitch and roll are supported.
 * A/D: Left/Right yaw
 ## Indicators
 ### Attitude
-The artificial horizon indicator works on the principle of a fixed earth. This means that the horizon line (2) remains stationary while the vehicle symbol (1)rotates relative to it.
+The artificial horizon indicator works on the principle of a fixed earth. This means that the horizon line (2) remains stationary while the vehicle symbol (1) rotates relative to it.
 ![](images/attitude.jpg "")
 The indicator in the picture shows a pitch of about 22 degrees (3) and a left roll of slightly more than 10 degrees (4). If the pitch angle value (3) is less than zero, we will see the reverse side of the silhouette (1), which has a red color.
 ## Physics
