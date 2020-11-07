@@ -24,6 +24,9 @@ Two control modes of pitch and roll are supported.
 ### Common controls for both modes
 * W/S: Increase/Decrease throttle
 * A/D: Left/Right yaw
+## Indicators
+### Attitude
+The artificial horizon indicator works on the principle of a fixed earth. This means that the horizon line remains stationary while the vehicle symbol rotates relative to it.
 ## Physics
 Obviously, there are no exact models for the game. Currently, there is no source data for creating such models. However, we can make some assumptions:
 1. The mole moves in the direction of its longitudinal axis, the values of the angles of attack and sideslip are negligible. Indeed, it would be strange to see the movement shown in the picture.
