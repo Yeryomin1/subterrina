@@ -33,6 +33,10 @@ The indicator in the picture shows a pitch of about 22 degrees (3) and a left ro
 The heading indicator displays the compass direction in which vehicle nose is pointed. The subterrina heading is equal to its track. More on this below.
 ![](images/heading.jpg "")
 The number 321 in the image corresponds to the heading value in degrees. The scale marks are to be multiplied by 10.
+### Radar
+Radar indicators are designed for target tracking. The left one shows the vertical plane. The right one shows the horizontal plane.
+![](images/radar.jpg "")
+ The white mark on the left indicator corresponds to the distance of the object.
 ## Physics
 Obviously, there are no exact models for the game. Currently, there is no source data for creating such models. However, we can make some assumptions:
 1. The mole moves in the direction of its longitudinal axis, the values of the angles of attack and sideslip are negligible. Indeed, it would be strange to see the movement shown in the picture.
