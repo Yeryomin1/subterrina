@@ -28,7 +28,7 @@ Two control modes of pitch and roll are supported.
 Obviously, there are no exact models for the game. Currently, there is no source data for creating such models. However, we can make some assumptions:
 1. The mole moves in the direction of its longitudinal axis, the values of the angles of attack and sideslip are negligible. Indeed, it would be strange to see the movement shown in the picture.
 ![](images/velocity.jpg "")
-2. The vehicle does not need lift force, such as that of an airplane wing.
+2. The vehicle does not need lift force, such as that of an airplane wing. This statement is less obvious than the first one. Let's say that the mole is more of a submarine than an airplane.
 ## Screenshots
 ### General
 The game as a whole looks like this.
