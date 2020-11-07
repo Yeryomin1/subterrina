@@ -32,5 +32,8 @@ Obviously, there are no exact models for the game. Currently, there is no source
 ![](images/velocity_accel.jpg "")
 ## Screenshots
 ### General
-The game as a whole looks like this.
+The game process as a whole looks like this.
 ![](images/play.gif "")
+### Game over
+The top message contains a brief description of the accident circumstances.
+![](images/game_over_screen.jpg "")
