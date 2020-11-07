@@ -9,15 +9,15 @@ window.onload = function () {
     //объекты:
     let game = {};
 
-        game._modalWindow = document.getElementById("modalWindow");
-        game._instructionWindow = document.getElementById("instructionWindow"); 
-        game._messageWindow = document.getElementById("messageWindow");
+    game._modalWindow = document.getElementById("modalWindow");
+    game._instructionWindow = document.getElementById("instructionWindow");
+    game._messageWindow = document.getElementById("messageWindow");
 
-        game._messageTitle = document.getElementById("messageTitle");
-        game._messageText = document.getElementById("messageText");
+    game._messageTitle = document.getElementById("messageTitle");
+    game._messageText = document.getElementById("messageText");
 
-        game._instructionTitle = document.getElementById("instructionTitle");
-        game._instructionText = document.getElementById("instructionText");
+    game._instructionTitle = document.getElementById("instructionTitle");
+    game._instructionText = document.getElementById("instructionText");
 
 
 
@@ -27,7 +27,7 @@ window.onload = function () {
 
         //поля:        
         game._stop = true;
-            
+
 
 
         game._frameRate = 60;
@@ -68,7 +68,7 @@ window.onload = function () {
     }
 
     //сообщение в модальном окне:
-    game.alert = function(msgTitle, msgText){
+    game.alert = function (msgTitle, msgText) {
         game._messageWindow.style.display = "block";
         game._messageTitle.innerHTML = msgTitle;
         game._messageText.innerHTML = msgText;
@@ -157,19 +157,19 @@ window.onload = function () {
         //проверка состояния "Пауза":
         if (game._stop) return;
         //проверка возможности продолжения игры:
-        if (game._oxygen < 0 || game._roll > 55 || game._roll < -55 || game._pitch > 25 || game._pitch < -25 || game._depth < 0 || game._depth > 2800 || earth.winOrLose==-1 || (earth.winOrLose==1&&game._speed>game._maxFinishSpeed)) {
+        if (game._oxygen < 0 || game._roll > 55 || game._roll < -55 || game._pitch > 25 || game._pitch < -25 || game._depth < 0 || game._depth > 2800 || earth.winOrLose == -1 || (earth.winOrLose == 1 && game._speed > game._maxFinishSpeed)) {
             game.setStop(true);
             if (game._oxygen < 0) game.alert("GAME OVER", "Lack of oxygen");
             if (game._roll > 55 || game._roll < -55) game.alert("GAME OVER", "The mole is destroyed. Roll restriction violated.");
-            if ( game._pitch > 25 || game._pitch < -25 ) game.alert("GAME OVER", "The mole is destroyed. Pitch restriction violated.");
-            if ( game._depth > 2800 ) game.alert("GAME OVER", "The mole is destroyed. Depth restriction violated.");
-            if ( game._depth < 0 ) game.alert("GAME OVER", "The mole is destroyed. Surface reached.");
-            if ( earth.winOrLose==-1 ) game.alert("GAME OVER", "Collision. The underground base is destroyed.");
-            if ( earth.winOrLose==1&&game._speed>game._maxFinishSpeed ) game.alert("GAME OVER", "The maximum speed of the contact is exceeded. The underground base is destroyed.");           
+            if (game._pitch > 25 || game._pitch < -25) game.alert("GAME OVER", "The mole is destroyed. Pitch restriction violated.");
+            if (game._depth > 2800) game.alert("GAME OVER", "The mole is destroyed. Depth restriction violated.");
+            if (game._depth < 0) game.alert("GAME OVER", "The mole is destroyed. Surface reached.");
+            if (earth.winOrLose == -1) game.alert("GAME OVER", "Collision. The underground base is destroyed.");
+            if (earth.winOrLose == 1 && game._speed > game._maxFinishSpeed) game.alert("GAME OVER", "The maximum speed of the contact is exceeded. The underground base is destroyed.");
         }
-        if (earth.winOrLose==1&&game._speed<=game._maxFinishSpeed){
+        if (earth.winOrLose == 1 && game._speed <= game._maxFinishSpeed) {
             game.setStop(true);
-            game.alert("Mission accomplished", "Great job!!!");            
+            game.alert("Mission accomplished", "Great job!!!");
         }
         //реализуется физика:
         if (game._fuel < 0) {
@@ -186,46 +186,40 @@ window.onload = function () {
         else game._speed += acceleration * elapsed;
         if (game._speed > 20) {
             let radiansRoll = game._roll * 0.01745;
+            let radiansPitch = game._pitch * 0.01745;           
 
             let angularAccelZmole = -0.00005 * game._speed * game._controlPitch + 0.04 * game._speed * (Math.random() - 0.5);
-            //let angularAccelXmole = -0.00005 * game._speed * game._controlRoll;
+            let angularAccelXmole = -0.00005 * game._speed * game._controlRoll + 0.04 * game._speed * (Math.random() - 0.5);
             let angularAccelYmole = -0.00005 * game._speed * game._controlHeading + 0.04 * game._speed * (Math.random() - 0.5);
 
-            game._angularAccelZ = angularAccelZmole * Math.cos(radiansRoll) - angularAccelYmole * Math.sin(radiansRoll);
-            game._angularAccelX = -0.00005 * game._speed * game._controlRoll + 0.1 * game._speed * (Math.random() - 0.5);
-            game._angularAccelY = angularAccelYmole * Math.cos(radiansRoll) + angularAccelZmole * Math.sin(radiansRoll);
 
+            game._angularSpeedX += (angularAccelXmole - game._angularSpeedX * game._angularDempingX) * elapsed;
+            game._angularSpeedY += (angularAccelYmole - game._angularSpeedY * game._angularDempingY) * elapsed;
+            game._angularSpeedZ += (angularAccelZmole - game._angularSpeedZ * game._angularDempingZ) * elapsed;
 
-
-
-            game._angularSpeedZ += (game._angularAccelZ - game._angularSpeedZ * game._angularDempingZ) * elapsed;
-            game._pitch += game._angularSpeedZ * elapsed;
-
-            game._angularSpeedX += (game._angularAccelX - game._angularSpeedX * game._angularDempingX) * elapsed;
-            game._roll += game._angularSpeedX * elapsed;
-
-            game._angularSpeedY += (game._angularAccelY - game._angularSpeedY * game._angularDempingY) * elapsed;
-            game._heading += game._angularSpeedY * elapsed;
+            game._pitch += (game._angularSpeedZ * Math.cos(radiansRoll)  - game._angularSpeedY * Math.sin(radiansRoll))* elapsed;
+            game._roll += (game._angularSpeedX + game._angularSpeedY*Math.sin(radiansPitch)) * elapsed;
+            game._heading += (game._angularSpeedY+ game._angularSpeedZ * Math.sin(radiansRoll)) * elapsed;
 
 
         }
         //режим силовой установки:
-            if (game._powerSpeed) {
-                let newVal = game._power + game._powerSpeed * elapsed;
-                if ((game._powerSpeed > 0&&Math.floor(game._power) == Math.floor(newVal))
-                ||(game._powerSpeed < 0&&Math.ceil(game._power) == Math.ceil(newVal))) {
-                    game._power = newVal;
-                }
-                else if (game._powerSpeed < 0) {
-                    game._power = Math.floor(game._power);
-                    game._powerSpeed = 0;
-                }
-                else  if (game._powerSpeed > 0){
-                    game._power = Math.ceil(game._power);
-                    game._powerSpeed = 0;
-                }
-                game._fuelPerSecond = 0.2 * Math.sqrt(game._power);
+        if (game._powerSpeed) {
+            let newVal = game._power + game._powerSpeed * elapsed;
+            if ((game._powerSpeed > 0 && Math.floor(game._power) == Math.floor(newVal))
+                || (game._powerSpeed < 0 && Math.ceil(game._power) == Math.ceil(newVal))) {
+                game._power = newVal;
             }
+            else if (game._powerSpeed < 0) {
+                game._power = Math.floor(game._power);
+                game._powerSpeed = 0;
+            }
+            else if (game._powerSpeed > 0) {
+                game._power = Math.ceil(game._power);
+                game._powerSpeed = 0;
+            }
+            game._fuelPerSecond = 0.2 * Math.sqrt(game._power);
+        }
 
 
         game._verticalSpeed = game._speed * Math.sin(game._pitch / 57.3);
