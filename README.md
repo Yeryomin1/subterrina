@@ -29,6 +29,10 @@ Two control modes of pitch and roll are supported.
 The artificial horizon indicator works on the principle of a fixed earth. This means that the horizon line (2) remains stationary while the vehicle symbol (1) rotates relative to it.
 ![](images/attitude.jpg "")
 The indicator in the picture shows a pitch of about 22 degrees (3) and a left roll of slightly more than 10 degrees (4). If the pitch angle value is less than zero (the nose (3) is lower than the horizon line), we will see the reverse side of the silhouette (1), which has a red color.
+### Heading
+The heading indicator displays the compass direction in which vehicle nose is pointed. The subterrina heading is equal to its track. More on this below.
+![](images/heading.jpg "")
+The number 321 in the image corresponds to the heading value in degrees. The scale marks are to be multiplied by 10.
 ## Physics
 Obviously, there are no exact models for the game. Currently, there is no source data for creating such models. However, we can make some assumptions:
 1. The mole moves in the direction of its longitudinal axis, the values of the angles of attack and sideslip are negligible. Indeed, it would be strange to see the movement shown in the picture.
