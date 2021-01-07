@@ -133,7 +133,6 @@ window.onload = function () {
                     vehicle.speed = -10;
                     break;
                 case "Numpad4":
-                case "ArrowLeft":
                     vehicle.epsilonX = vehicle.efficiency;
                     break;
                 case "Numpad6":
