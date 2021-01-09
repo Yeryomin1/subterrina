@@ -220,8 +220,10 @@ window.onload = function () {
                 name: "Depth", value: vehicle.depth > 0 ? Math.floor(vehicle.depth * 10) / 10 : "surface contact",
                 measure: vehicle.depth > 0 ? "meters" : ""
             },
-            { name: "Heading", value: Math.floor(vehicle.heading>0?vehicle.heading*180/Math.PI:360+vehicle.heading*180/Math.PI),
-             measure: "degrees" },
+            {
+                name: "Heading", value: Math.floor(vehicle.heading > 0 ? vehicle.heading * 180 / Math.PI : 360 + vehicle.heading * 180 / Math.PI),
+                measure: "degrees"
+            },
             { name: "State", value: vehicle.state, measure: "" },
         ];
 
