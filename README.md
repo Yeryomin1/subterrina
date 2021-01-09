@@ -5,9 +5,11 @@ Simple javascript and HTML5's canvas 3D simulator game allowing you to be an iro
 * Head-Up Display with indication of vehicle parameters:
   * roll
   * pitch
+  * heading
+  * depth
 * keyboard control
 ### Controls
-* '4'/'6' - roll, left/right
+* '4'/'6': roll, left/right
 * W/S: pitch, nose down/up
 * A/D: Left/Right yaw
 ### HUD attitude
