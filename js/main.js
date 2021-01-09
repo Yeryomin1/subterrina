@@ -1,31 +1,40 @@
 window.onload = function () {
 
     class External {
-        constructor(threeScene, objNum) {
+        constructor(threeScene, objNum, depth) {
             this.objects = new THREE.Object3D();
+
+            this.emptyMat = new THREE.MeshBasicMaterial({
+                color: 0xff0000,
+                wireframe: true,
+            });
 
             let material = new THREE.MeshPhongMaterial({
                 color: 0xdaa520,
                 specular: 0xbcbcbc,
                 side: THREE.DoubleSide,
             });
+
+            this.objectsArr = [];
+            this.objectSize = 10;
             for (let i = 0; i < objNum; i++) {
-                let geometry = new THREE.SphereGeometry(Math.random() * 20 + 1, Math.random() * 10 + 2, Math.random() * 10 + 2);
+                let geometry = new THREE.SphereGeometry(this.objectSize, 5, 5);
 
                 let item = new THREE.Mesh(geometry, material);
-                item.position.x = (Math.random() - 0.5) * 1000;
+                item.position.x = (Math.random() - 0.5) * 400;
                 item.position.y = (Math.random() - 0.5) * 200;
-                item.position.z = -5000 + Math.random() * 4990;
+                item.position.z = (Math.random() - 0.5) * 400;
                 item.rotation.z = Math.random() * Math.PI;
                 item.rotation.y = Math.random() * Math.PI;
                 this.objects.add(item);
+                this.objectsArr.push(item);
             }
 
             let planeSize = 10000;
             let geometry = new THREE.PlaneBufferGeometry(planeSize, planeSize);
             let surface = new THREE.Mesh(geometry, material);
             surface.rotation.x = Math.PI * -.5;
-            surface.position.set(0, 150, 0);
+            surface.position.set(0, depth, 0);
             this.objects.add(surface);
 
             this.pivot = new THREE.Object3D();
@@ -36,14 +45,21 @@ window.onload = function () {
     }
 
     let vehicle = {
+        state: "RUN",
+        pitchRestriction: Math.PI / 3,
+        rollRestriction: Math.PI / 3,
+        timeRestriction: 60,
+        depthRestriction: 0,
+
         pitch: 0,
         roll: 0,
         heading: 0,
         lastPitch: 0,
         lastRoll: 0,
         lastHeading: 0,
+        depth: 150,
 
-        speed: 20,
+        speed: 40,
         omegaX: 0,
         omegaY: 0,
         omegaZ: 0,
@@ -59,6 +75,8 @@ window.onload = function () {
         yAxis: {},
         zAxis: {},
 
+
+        collisionsCount: 0,
         frameRate: 0,
         frameCount: 0,
         startTime: 0,
@@ -92,11 +110,11 @@ window.onload = function () {
         spotLight.position.set(0, 0, 1);
         scene.add(spotLight);
         //туман
-        //scene.fog = new THREE.Fog(0x000000, 2, 10000);
-        //искусственный горизонт
-        vehicle.attitude = new Attitude(camera, scene, 0.25, 90, 90);
+        scene.fog = new THREE.Fog(0x000000, 2, 2000);
+        //HUD:
+        vehicle.hud = new Hud(camera, scene, 0.25, 90, 90);
         //внешние объекты
-        vehicle.external = new External(scene, 40);
+        vehicle.external = new External(scene, 40, vehicle.depth);
         //связанная система координат:
         //X:
         vehicle.xAxis.x = 0;
@@ -113,32 +131,35 @@ window.onload = function () {
 
         //keyboard:
         document.addEventListener('keydown', function (event) {
-            switch (event.code) {
-                case "KeyW":
-                    vehicle.epsilonZ = vehicle.efficiency;
-                    break;
-                case "KeyS":
-                    vehicle.epsilonZ = -vehicle.efficiency;
-                    break;
-                case "KeyA":
-                    vehicle.epsilonY = -vehicle.efficiency;
-                    break;
-                case "KeyD":
-                    vehicle.epsilonY = vehicle.efficiency;
-                    break;
+            if (vehicle.state == "RUN")
+                switch (event.code) {
+                    case "KeyW":
+                        vehicle.epsilonZ = vehicle.efficiency;
+                        break;
+                    case "KeyS":
+                        vehicle.epsilonZ = -vehicle.efficiency;
+                        break;
+                    case "KeyA":
+                        vehicle.epsilonY = -vehicle.efficiency;
+                        break;
+                    case "KeyD":
+                        vehicle.epsilonY = vehicle.efficiency;
+                        break;
+                    /*
                 case "Numpad8":
                     vehicle.speed = 100;
                     break;
                 case "Numpad2":
                     vehicle.speed = -10;
                     break;
-                case "Numpad4":
-                    vehicle.epsilonX = vehicle.efficiency;
-                    break;
-                case "Numpad6":
-                    vehicle.epsilonX = -vehicle.efficiency;
-                    break;
-            }
+                    */
+                    case "Numpad4":
+                        vehicle.epsilonX = vehicle.efficiency;
+                        break;
+                    case "Numpad6":
+                        vehicle.epsilonX = -vehicle.efficiency;
+                        break;
+                }
         });
 
         document.addEventListener('keyup', function (event) {
@@ -155,9 +176,11 @@ window.onload = function () {
                 case "KeyD":
                     vehicle.epsilonY = 0;
                     break;
-                case "Numpad2":
-                    vehicle.speed = 0;
-                    break;
+                /*
+            case "Numpad2":
+                vehicle.speed = 0;
+                break;
+                */
                 case "Numpad4":
                     vehicle.epsilonX = 0;
                     break;
@@ -177,8 +200,9 @@ window.onload = function () {
         vehicle.time = new Date();
         //подсчет fps:
         this.frameCount++;
-        console.log("total frame rate = " + 1000 * this.frameCount / (vehicle.time - this.startTime));
 
+        //console.log("pitch = " + vehicle.pitch + "roll = " + vehicle.roll + "hdg = " + vehicle.heading);
+        console.log("total frame rate = " + 1000 * this.frameCount / (vehicle.time - this.startTime));
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
@@ -186,8 +210,59 @@ window.onload = function () {
         vehicle.omegaY += (vehicle.epsilonY - vehicle.omegaY * vehicle.damping) * vehicle.elapsed;
         vehicle.omegaZ += (vehicle.epsilonZ - vehicle.omegaZ * vehicle.damping) * vehicle.elapsed;
 
-        vehicle.attitude.update(vehicle.roll * 180 / Math.PI, vehicle.pitch * 180 / Math.PI);
+        //индикация:
+        let availableTime = vehicle.timeRestriction - (vehicle.time - vehicle.startTime) / 1000;
+
+        let textParams = [
+            { name: "Time", value: Math.floor(availableTime > 0 ? availableTime : 0), measure: "seconds" },
+            { name: "Score", value: vehicle.collisionsCount, measure: "" },
+            {
+                name: "Depth", value: vehicle.depth > 0 ? Math.floor(vehicle.depth * 10) / 10 : "surface contact",
+                measure: vehicle.depth > 0 ? "meters" : ""
+            },
+            { name: "Heading", value: Math.floor(vehicle.heading>0?vehicle.heading*180/Math.PI:360+vehicle.heading*180/Math.PI),
+             measure: "degrees" },
+            { name: "State", value: vehicle.state, measure: "" },
+        ];
+
+        vehicle.hud.update(textParams, vehicle.roll, vehicle.pitch);
+
+        //столкновения:
+        for (let i = 0; i < vehicle.external.objectsArr.length; i++) {
+            let xPos = vehicle.external.objectsArr[i].position.x +
+                vehicle.external.objects.position.x;
+            let yPos = vehicle.external.objectsArr[i].position.y +
+                vehicle.external.objects.position.y;
+            let zPos = vehicle.external.objectsArr[i].position.z +
+                vehicle.external.objects.position.z;
+
+            let dist = Math.sqrt(xPos * xPos + yPos * yPos + zPos * zPos);
+            if (dist < this.external.objectSize) {
+                vehicle.collisionsCount++;
+                vehicle.external.objectsArr.splice(i, 1)[0].material = vehicle.external.emptyMat;
+            }
+
+        }
+        //глубина:
+        vehicle.depth -= Math.sin(vehicle.pitch) * vehicle.speed * vehicle.elapsed;
+        //проверка ограничений:
+        vehicle.checkRestrictions();
+
     }
+
+    vehicle.checkRestrictions = function () {
+        if (Math.abs(vehicle.roll) > this.rollRestriction ||
+            Math.abs(vehicle.pitch) > this.pitchRestriction ||
+            (vehicle.time - vehicle.startTime) / 1000 > vehicle.timeRestriction ||
+            vehicle.depth < vehicle.depthRestriction) {
+            vehicle.state = "GAME OVER";
+            vehicle.speed = 0;
+            vehicle.omegaX = 0;
+            vehicle.omegaY = 0;
+            vehicle.omegaZ = 0;
+        }
+
+    };
 
     //Цикл анимации:
     function loop() {
@@ -214,7 +289,6 @@ window.onload = function () {
 
             let axisOfRotation = new THREE.Vector3(omegaG.x, omegaG.y, omegaG.z);
             vehicle.external.pivot.rotateOnAxis(axisOfRotation, omegaVal * vehicle.elapsed);
-
 
             //поворачиваем оси ССК:
             rotateVecOnAxis(vehicle.xAxis, omegaG, -omegaVal * vehicle.elapsed);
