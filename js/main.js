@@ -45,41 +45,43 @@ window.onload = function () {
     }
 
     let vehicle = {
-        state: "RUN",
+        //ограничения:        
         pitchRestriction: Math.PI / 3,
         rollRestriction: Math.PI / 3,
         timeRestriction: 60,
         depthRestriction: 0,
-
+        //углы положения в пространстве:
         pitch: 0,
         roll: 0,
         heading: 0,
-        lastPitch: 0,
-        lastRoll: 0,
-        lastHeading: 0,
+        //глубина:
         depth: 150,
-
-        speed: 40,
+        //скорости:
+        speed: 0,
         omegaX: 0,
         omegaY: 0,
         omegaZ: 0,
-
+        //угловые скорости:
         epsilonX: 0,
         epsilonY: 0,
         epsilonZ: 0,
-
+        //коэффициенты диф ур управляемости:
         efficiency: 2,
         damping: 2,
-
+        //связанная система координат:
         xAxis: {},
         yAxis: {},
         zAxis: {},
-
-
+        //столкновения:
         collisionsCount: 0,
-        frameRate: 0,
-        frameCount: 0,
+    };
+
+    let game = {
+        time: 0,
         startTime: 0,
+        state: "READINESS",
+        frameCount: 0,
+
     };
 
     let renderer;
@@ -131,7 +133,13 @@ window.onload = function () {
 
         //keyboard:
         document.addEventListener('keydown', function (event) {
-            if (vehicle.state == "RUN")
+            if (game.state == "READINESS")
+                if (event.code == "Space") {
+                    game.state = "RUN";
+                    vehicle.speed = 40;
+                    game.startTime = game.time;
+                }
+            if (game.state == "RUN")
                 switch (event.code) {
                     case "KeyW":
                         vehicle.epsilonZ = vehicle.efficiency;
@@ -191,30 +199,31 @@ window.onload = function () {
         });
 
         //таймер
-        vehicle.time = new Date();
-        vehicle.startTime = vehicle.time;
+        game.time = new Date();
+
     }
 
     vehicle.update = function () {
-        vehicle.elapsed = (new Date() - vehicle.time) / 1000;
-        vehicle.time = new Date();
+        game.elapsed = (new Date() - game.time) / 1000;
+        game.time = new Date();
         //подсчет fps:
-        this.frameCount++;
-
+        game.frameCount++;
         //console.log("pitch = " + vehicle.pitch + "roll = " + vehicle.roll + "hdg = " + vehicle.heading);
-        console.log("total frame rate = " + 1000 * this.frameCount / (vehicle.time - this.startTime));
+        console.log("total frame rate = " + 1000 * game.frameCount / (game.time - game.startTime));
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
-        vehicle.omegaX += (vehicle.epsilonX - vehicle.omegaX * vehicle.damping) * vehicle.elapsed;
-        vehicle.omegaY += (vehicle.epsilonY - vehicle.omegaY * vehicle.damping) * vehicle.elapsed;
-        vehicle.omegaZ += (vehicle.epsilonZ - vehicle.omegaZ * vehicle.damping) * vehicle.elapsed;
+        vehicle.omegaX += (vehicle.epsilonX - vehicle.omegaX * vehicle.damping) * game.elapsed;
+        vehicle.omegaY += (vehicle.epsilonY - vehicle.omegaY * vehicle.damping) * game.elapsed;
+        vehicle.omegaZ += (vehicle.epsilonZ - vehicle.omegaZ * vehicle.damping) * game.elapsed;
 
+        //игровое время::
+        if (game.state == "RUN")
+            game.availableTime = vehicle.timeRestriction - (game.time - game.startTime) / 1000;
+        else if (game.state == "READINESS") game.availableTime = vehicle.timeRestriction;
         //индикация:
-        let availableTime = vehicle.timeRestriction - (vehicle.time - vehicle.startTime) / 1000;
-
         let textParams = [
-            { name: "Time", value: Math.floor(availableTime > 0 ? availableTime : 0), measure: "seconds" },
+            { name: "Time", value: Math.floor(game.availableTime > 0 ? game.availableTime : 0), measure: "seconds" },
             { name: "Score", value: vehicle.collisionsCount, measure: "" },
             {
                 name: "Depth", value: vehicle.depth > 0 ? Math.floor(vehicle.depth * 10) / 10 : "surface contact",
@@ -224,11 +233,11 @@ window.onload = function () {
                 name: "Heading", value: Math.floor(vehicle.heading > 0 ? vehicle.heading * 180 / Math.PI : 360 + vehicle.heading * 180 / Math.PI),
                 measure: "degrees"
             },
-            { name: "State", value: vehicle.state, measure: "" },
+            { name: "State", value: game.state, measure: "" },
         ];
 
-        vehicle.hud.update(textParams, vehicle.roll, vehicle.pitch);
-
+        let msg = game.state == "READINESS" ? "Press SPACE to start" : "";
+        vehicle.hud.update(textParams, vehicle.roll, vehicle.pitch, msg);
         //столкновения:
         for (let i = 0; i < vehicle.external.objectsArr.length; i++) {
             let xPos = vehicle.external.objectsArr[i].position.x +
@@ -246,23 +255,24 @@ window.onload = function () {
 
         }
         //глубина:
-        vehicle.depth -= Math.sin(vehicle.pitch) * vehicle.speed * vehicle.elapsed;
+        vehicle.depth -= Math.sin(vehicle.pitch) * vehicle.speed * game.elapsed;
         //проверка ограничений:
         vehicle.checkRestrictions();
 
     }
 
     vehicle.checkRestrictions = function () {
-        if (Math.abs(vehicle.roll) > this.rollRestriction ||
-            Math.abs(vehicle.pitch) > this.pitchRestriction ||
-            (vehicle.time - vehicle.startTime) / 1000 > vehicle.timeRestriction ||
-            vehicle.depth < vehicle.depthRestriction) {
-            vehicle.state = "GAME OVER";
-            vehicle.speed = 0;
-            vehicle.omegaX = 0;
-            vehicle.omegaY = 0;
-            vehicle.omegaZ = 0;
-        }
+        if (game.state == "RUN")
+            if (Math.abs(vehicle.roll) > this.rollRestriction ||
+                Math.abs(vehicle.pitch) > this.pitchRestriction ||
+                (game.time - game.startTime) / 1000 > vehicle.timeRestriction ||
+                vehicle.depth < vehicle.depthRestriction) {
+                game.state = "GAME OVER";
+                vehicle.speed = 0;
+                vehicle.omegaX = 0;
+                vehicle.omegaY = 0;
+                vehicle.omegaZ = 0;
+            }
 
     };
 
@@ -290,12 +300,12 @@ window.onload = function () {
             //поворачиваем объект:
 
             let axisOfRotation = new THREE.Vector3(omegaG.x, omegaG.y, omegaG.z);
-            vehicle.external.pivot.rotateOnAxis(axisOfRotation, omegaVal * vehicle.elapsed);
+            vehicle.external.pivot.rotateOnAxis(axisOfRotation, omegaVal * game.elapsed);
 
             //поворачиваем оси ССК:
-            rotateVecOnAxis(vehicle.xAxis, omegaG, -omegaVal * vehicle.elapsed);
-            rotateVecOnAxis(vehicle.yAxis, omegaG, -omegaVal * vehicle.elapsed);
-            rotateVecOnAxis(vehicle.zAxis, omegaG, -omegaVal * vehicle.elapsed);
+            rotateVecOnAxis(vehicle.xAxis, omegaG, -omegaVal * game.elapsed);
+            rotateVecOnAxis(vehicle.yAxis, omegaG, -omegaVal * game.elapsed);
+            rotateVecOnAxis(vehicle.zAxis, omegaG, -omegaVal * game.elapsed);
         }
 
         function rotateVecOnAxis(vec, axis, radians) {
@@ -328,9 +338,9 @@ window.onload = function () {
                 vehicle.xAxis.x / vehicle.xAxis.z));
 
         //линейное перемещение пространства вдоль оси X ССК:
-        vehicle.external.objects.position.x -= vehicle.elapsed * vehicle.speed * Math.cos(vehicle.pitch) * Math.sin(vehicle.heading);
-        vehicle.external.objects.position.z += vehicle.elapsed * vehicle.speed * Math.cos(vehicle.pitch) * Math.cos(vehicle.heading);
-        vehicle.external.objects.position.y -= vehicle.elapsed * vehicle.speed * Math.sin(vehicle.pitch);
+        vehicle.external.objects.position.x -= game.elapsed * vehicle.speed * Math.cos(vehicle.pitch) * Math.sin(vehicle.heading);
+        vehicle.external.objects.position.z += game.elapsed * vehicle.speed * Math.cos(vehicle.pitch) * Math.cos(vehicle.heading);
+        vehicle.external.objects.position.y -= game.elapsed * vehicle.speed * Math.sin(vehicle.pitch);
 
         //рендеринг
         renderer.render(scene, camera);
