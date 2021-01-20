@@ -235,10 +235,10 @@ window.onload = function () {
             },
             { name: "State", value: game.state, measure: "" },
         ];
-        let instructionText = "<b>Restrictions</b>:<br>pitch: "+Math.round(vehicle.pitchRestriction*180/Math.PI)+
-        " degrees<br>"+"roll: "+Math.round(vehicle.rollRestriction*180/Math.PI)+
-        " degrees<br>"+ "<br><b>Controls:</b><br>"+
-        "'W'/'S' - nose DOWN/nose UP<br>" +
+        let instructionText = "<b>Restrictions</b>:<br>pitch: " + Math.round(vehicle.pitchRestriction * 180 / Math.PI) +
+            " degrees<br>" + "roll: " + Math.round(vehicle.rollRestriction * 180 / Math.PI) +
+            " degrees<br>" + "<br><b>Controls:</b><br>" +
+            "'W'/'S' - nose DOWN/nose UP<br>" +
             "'A'/'D' - turn LEFT/turn RIGHT<br>" +
             "numpad '4'/'6' - roll LEFT/roll RIGHT<br>" +
             "<br><b>Press 'SPACE' to start</b>";
