@@ -22,10 +22,10 @@ class Hud {
         this.msg.style.position = 'absolute';
         this.msg.style.width = 100;
         this.msg.style.height = 100;
-        this.msg.style.color = "Yellow";
-        this.msg.style.fontSize = window.innerHeight / 15 + "px";
+        this.msg.style.color = "Red";
+        this.msg.style.fontSize = window.innerHeight / 25 + "px";
         this.msg.innerHTML = text;
-        this.msg.style.top = 50 + '%';
+        this.msg.style.top = 40 + '%';
         this.msg.style.left = 5 + '%';
         document.body.appendChild(this.msg);
     }
@@ -37,7 +37,7 @@ class Hud {
         }
         this.label.innerHTML = text;
         //сообщение:
-        this.msg.innerHTML = "<b>" + message + "</b>";
+        this.msg.innerHTML = message;
 
         this.attitude.update(rollRads * 180 / Math.PI, pitchRads * 180 / Math.PI);
     }

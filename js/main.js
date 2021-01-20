@@ -235,8 +235,14 @@ window.onload = function () {
             },
             { name: "State", value: game.state, measure: "" },
         ];
-
-        let msg = game.state == "READINESS" ? "Press SPACE to start" : "";
+        let instructionText = "<b>Restrictions</b>:<br>pitch: "+Math.round(vehicle.pitchRestriction*180/Math.PI)+
+        " degrees<br>"+"roll: "+Math.round(vehicle.rollRestriction*180/Math.PI)+
+        " degrees<br>"+ "<br><b>Controls:</b><br>"+
+        "'W'/'S' - nose DOWN/nose UP<br>" +
+            "'A'/'D' - turn LEFT/turn RIGHT<br>" +
+            "numpad '4'/'6' - roll LEFT/roll RIGHT<br>" +
+            "<br><b>Press 'SPACE' to start</b>";
+        let msg = game.state == "READINESS" ? instructionText : "";
         vehicle.hud.update(textParams, vehicle.roll, vehicle.pitch, msg);
         //столкновения:
         for (let i = 0; i < vehicle.external.objectsArr.length; i++) {
